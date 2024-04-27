@@ -1,0 +1,65 @@
+site_name: Compose Theme
+repo_url: https://github.com/composablehorizons/composetheme/
+site_url: https://composablehorizons.github.io/composetheme/
+theme:
+  name: material
+  font:
+    text: Fira Sans
+    code: Jetbrains Mono
+  features:
+#    - navigation.sections
+#    - toc.integrate
+#    - navigation.top
+#    - search.suggest
+#    - search.highlight
+#    - content.tabs.link
+#    - content.code.annotation
+#    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      primary: white
+      accent: gray
+
+plugins:
+  - social
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/composablehorizons/
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/alexstyl
+
+# Page tree
+nav:
+  - Introduction:
+      - What is Compose Theme?: index.md
+  - Getting started:
+      - Installation: installation.md
+      - Theming Basics: basics.md
+      - Colors: colors.md
+      - Text Styles: textstyles.md
+      - Shapes: shapes.md
+      - Custom Properties: custom-properties.md
+  - Code Examples:
+      - Custom Design System: custom-design-system.md
+      - Dynamic Theming: dynamic-theming.md
+      - Component Styling: component-styling.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      title: On this page
+  - pymdownx.betterem
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+copyright: |
+  <a href="https://github.com/composablehorizons"><img  src="composables.svg"></a>
