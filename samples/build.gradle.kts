@@ -25,6 +25,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(compose.material3)
         }
         val desktopMain by getting {
             dependencies {
