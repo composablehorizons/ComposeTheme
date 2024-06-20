@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.text.TextStyle
 
+
 /**
  * An object which can be used to get values from the currently resolved theme.
  *
@@ -25,49 +26,20 @@ data class DesignToken<T>(val name: String)
 
 typealias ThemeComposable = @Composable (@Composable () -> Unit) -> Unit
 
-/**
- * Returns a [Composable] function that can be used to style your application.
- *
- * You can then use the [ComposeTheme] object within your wrapped content to get the values mapped to respective [DesignToken]s.
- *
- * Here is an example that defines and uses custom colors:
- * ```kotlin
- * // define your color tokens
- * val content = DesignToken<Color>("content")
- * val background = DesignToken<Color>("background")
- *
- * // use the tokens in your theme
- * val AppTheme = buildComposeTheme {
- *     colors = mapOf(
- *         content to Color(0xFF212121),
- *         background to Color(0xFFFAFAFA),
- *     )
- * }
- *
- * // use the ComposeTheme object to use the tokens in runtime
- * @Composable
- * fun App() {
- *     AppTheme {
- *         Box(Modifier.background(ComposeTheme.colors[background]).fillMaxSize()) {
- *             BasicText("The is a styled example", style = TextStyle(color = ComposeTheme.colors[content]))
- *         }
- *     }
- * }
- * ```
- *
- */
-fun buildComposeTheme(themeBuilder: ThemeBuilder.(ThemeProperties) -> Unit): ThemeComposable {
-    val themeProperties = ThemeProperties()
-    val theme = ThemeBuilder(themeProperties).apply {
-        themeBuilder(themeProperties)
-    }.build()
+fun buildComposeTheme(themeBuilder: ThemeBuilder.() -> Unit): ThemeComposable {
+    val builder = ThemeBuilder().apply(themeBuilder)
+
+
+    val allProperties: Map<DesignProperty<*>, DesignTokens<*>> = mapOf(
+        _colors to DesignTokens("colors", builder.colors + DefaultComposeTheme.colors), _textStyles to DesignTokens("textStyles", builder.textStyles + DefaultComposeTheme.textStyles), _shapes to DesignTokens("shapes", builder.shapes + DefaultComposeTheme.shapes)
+    ) + builder.properties.entries
+
+    val theme = ResolvedTheme(builder.name, builder.indication, allProperties, builder.themeWrapper)
+
     return { content ->
-        CompositionLocalProvider(
-            LocalTheme provides theme,
-            LocalIndication provides theme.indication,
-        ) {
-            content()
-        }
+        CompositionLocalProvider(LocalTheme provides theme, LocalIndication provides builder.indication, content = {
+            theme.Extend(content)
+        })
     }
 }
 
@@ -100,7 +72,7 @@ internal object DefaultIndication : Indication {
 }
 
 internal class ResolvedTheme(
-    internal val name: String = "ComposeTheme", internal val indication: Indication, private val properties: Map<DesignProperty<*>, DesignTokens<*>> = emptyMap()
+    internal val name: String = "ComposeTheme", internal val indication: Indication, private val properties: Map<DesignProperty<*>, DesignTokens<*>> = emptyMap(), internal val Extend: ThemeComposable
 ) {
     @Suppress("UNCHECKED_CAST")
     fun <T> getProperty(property: DesignProperty<T>): DesignTokens<T>? {
@@ -133,7 +105,11 @@ operator fun <T> ComposeTheme.get(property: DesignProperty<T>): DesignTokens<T> 
     )
 }
 
-class ThemeBuilder internal constructor(private val extraProperties: ThemeProperties) {
+@DslMarker
+annotation class ThemeBuilderMarker
+
+@ThemeBuilderMarker
+class ThemeBuilder internal constructor() {
     /**
      * The name of the theme. Useful for debugging purposes.
      */
@@ -145,20 +121,20 @@ class ThemeBuilder internal constructor(private val extraProperties: ThemeProper
     var textStyles: Map<DesignToken<TextStyle>, TextStyle> = DefaultComposeTheme.textStyles
     var shapes: Map<DesignToken<Shape>, Shape> = DefaultComposeTheme.shapes
 
-    internal fun build(): ResolvedTheme {
-        val allProperties: Map<DesignProperty<*>, DesignTokens<*>> = mapOf(
-            _colors to DesignTokens("colors", colors + DefaultComposeTheme.colors),
-            _textStyles to DesignTokens("textStyles", textStyles + DefaultComposeTheme.textStyles),
-            _shapes to DesignTokens("shapes", shapes + DefaultComposeTheme.shapes)
-        ) + extraProperties.entries
+    val properties = MutableThemeProperties()
 
-        return ResolvedTheme(
-            name, indication, allProperties
-        )
+    internal var themeWrapper: ThemeComposable = { content -> content() }
+
+    /**
+     * Allows the integration with other design systems.
+     * @param themeWrapper a composable function that wraps the theme composable of the other design system
+     */
+    fun extend(themeWrapper: ThemeComposable) {
+        this.themeWrapper = themeWrapper
     }
 }
 
-class ThemeProperties internal constructor() {
+class MutableThemeProperties internal constructor() {
     internal val entries = mutableMapOf<DesignProperty<*>, DesignTokens<*>>()
     operator fun <T> set(property: DesignProperty<T>, value: Map<DesignToken<T>, T>) {
         entries[property] = DesignTokens(property.name, value)
