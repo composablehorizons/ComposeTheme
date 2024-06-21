@@ -99,7 +99,7 @@ val background = DesignToken<Color>("background")
 
 ```kotlin
 val Theme = buildComposeTheme {
-    colors = mapOf(
+    colors = DesignTokens(
         primary to Color.Red,
         background to Color.Gray,
     )
@@ -120,25 +120,30 @@ fun App() {
 }
 ```
 
+> [!WARNING]  
+> It is not currently possible to override the default tokens of the default properties
+
 ## Define your own design properties (ie adding transition speed)
 
-1. Create a new `DesignProperty` for every new property you need. Also crease a new `DesignToken` for each token this
-   property contains:
+1. Create a new `DesignProperty` for every new property you need. Design Properties can contain any type:
 
 ```kotlin
-val transition = DesignProperty<Int>("transition")
+val transitions = DesignProperty<Int>("transitions")
 
-val fast = DesignToken<Int>("fast")
-val faster = DesignToken<Int>("faster")
+@Immutable
+data class Transitions(
+    val fast: Int,
+    val faster: Int
+)
 ```
 
-2. Use the new property and tokens while setting up your theme and assign a respective value:
+2. Use the new property while setting up your theme:
 
 ```kotlin
-val Theme = buildComposeTheme { properties ->
-    properties[transition] = mapOf(
-        fast to 200, 
-        faster to 300
+val Theme = buildComposeTheme { 
+    properties[transition] = Transitions(
+        fast = 200, 
+        faster = 300
     )
 }
 ```
@@ -150,7 +155,7 @@ val Theme = buildComposeTheme { properties ->
 @Composable
 fun App() {
     Theme {
-        val animationSpeed = ComposeTheme[transition][fast] 
+        val animationSpeed = ComposeTheme[transition].fast 
         // ...
     }
 }
@@ -169,7 +174,7 @@ val primary = DesignToken<Color>("primary")
 
 val LightTheme = buildComposeTheme {
     name = "LightTheme"
-    colors = mapOf(
+    colors = DesignTokens(
         primary to Color.Red
     )
 }
