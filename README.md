@@ -132,7 +132,7 @@ fun App() {
 1. Create a new `DesignProperty` for every new property you need. Design Properties can contain any type:
 
 ```kotlin
-val transitions = DesignProperty<Int>("transitions")
+val transitions = DesignProperty<Transitions>("transitions")
 
 @Immutable
 data class Transitions(
