@@ -12,6 +12,10 @@ repositories {
 
 dependencies {
     implementation("com.composables:composetheme:1.1.0-alpha")
+    // includes extensions for material 3 compose
+    implementation ("com.composables:composetheme-material3:1.1.0-alpha")
+    // includes extensions for material compose
+    implementation ("com.composables:composetheme-material:1.1.0-alpha")
 }
 ```
 
