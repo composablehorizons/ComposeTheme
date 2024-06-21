@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.composables:composetheme:1.0.1-alpha")
+    implementation("com.composables:composetheme:1.1.0-alpha")
 }
 ```
 
