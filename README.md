@@ -161,6 +161,65 @@ fun App() {
 }
 ```
 
+## Extend ComposeTheme with existing design systems
+
+Let's assume you have an `ExistingTheme` composable function that uses one or more `CompositionLocalProvider` that push down the Compose tree styling properties. You probably also have a respective `ExistingTheme` object with extension functions that get the respective `CompositionLocal.current` value. You also use this `ExistingTheme` object across your codebase to style your components.
+
+You can extend your Compose Theme to use other design systems using the `extend` function. 
+
+This will cause the children of the created theme composable to have access to any `CompositionLocal`, provided by your provided.
+
+You can now use Compose Theme to easily build flexible themes, while the rest of your code base stays unmodified:
+
+```kotlin
+val ComposeThemeExtended = buildComposeTheme {
+    extend { content ->
+        ExistingTheme {
+            content()
+        }
+    }
+}
+```
+
+### Extend using Material 3 Compose & Material Compose 
+
+Working with Material Compose can be painful as it does not let you add new colors easily. At the same time your components wrap the Material Compose components, which are styled using `MaterialTheme`, which leaves you to a dead end.
+
+Compose Theme makes it simple to build new themes using existing Material Compose theme setups using the `composetheme-material3` and `composetheme-material` modules.
+
+These modules add the respective `extendMaterial3` and `extendMaterial` functions that you can use to extend your new theme using Material Design. 
+
+They also add helpful extension functions to the `ComposeTheme` object, so that you can use `ComposeTheme.colorScheme.primary` or `ComposeTheme.typography.bodyLarge` instead of the respective `MaterialTheme` counterpart.
+
+This gives you both the flexibility to create fully custom themes with any kind of design properties and tokens, while allowing you to continue using the components from Material Compose libraries:
+
+```kotlin
+val buttonLabel = DesignToken<TextStyle>("buttonLabel")
+
+val Material3ThemeExtended = buildComposeTheme {
+    textStyles = DesignTokens(
+       buttonLabel to TextStyle(fontSize = 12.sp, lineHeight = 16.sp)
+    )
+
+   extendMaterial3 {
+      colorScheme = lightColorScheme(
+         primary = Color.Red,
+      )
+      typography = Typography()
+      shapes = Shapes()
+   }
+}
+
+@Composable
+fun App() {
+   Material3ThemeExtended {  
+      Button(onClick = { }) { // this button is rendered Red
+         Text("Click me!", style = ComposeTheme.textStyles[buttonLabel])
+      }
+   }
+}
+```
+
 ## Debugging (optional)
 
 You can define a name to your theme. This is optional but recommended, especially when using multiple themes in your

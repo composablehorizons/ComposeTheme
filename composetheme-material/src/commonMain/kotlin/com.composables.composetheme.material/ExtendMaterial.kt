@@ -37,8 +37,7 @@ fun ThemeBuilder.extendMaterial(themeBuilder: MaterialThemeBuilder.() -> Unit) {
             _onSurface to onSurface,
             _error to error,
             _onError to onError,
-
-            )
+        )
     }
     with(theme.shapes) {
         shapes = DesignTokens(
