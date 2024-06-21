@@ -36,4 +36,6 @@ dependencyResolutionManagement {
 }
 
 include(":composetheme")
+include(":composetheme-material3")
+include(":composetheme-material")
 include(":samples")

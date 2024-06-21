@@ -21,11 +21,15 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":composetheme"))
+            implementation(project(":composetheme-material3"))
+            implementation(compose.material3)
+            implementation(project(":composetheme-material"))
+            implementation(compose.material)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.material3)
         }
         val desktopMain by getting {
             dependencies {

@@ -1,6 +1,11 @@
 import androidx.compose.ui.window.singleWindowApplication
-import com.composables.composetheme.samples.UsingWithMaterialDemo
+import com.composables.composetheme.samples.*
 
 fun main() = singleWindowApplication {
-    UsingWithMaterialDemo()
+//    CustomPropertiesDemo()
+//    DefaultsDemo()
+//    DynamicThemeDemo()
+//    ExtendDemo()
+//    ExtendMaterial3Demo()
+//    ExtendMaterialDemo()
 }
