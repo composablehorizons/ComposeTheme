@@ -26,12 +26,42 @@ data class DesignToken<T>(val name: String)
 
 typealias ThemeComposable = @Composable (@Composable () -> Unit) -> Unit
 
+/**
+ * Returns a [Composable] function that can be used to style your application.
+ *
+ * You can then use the [ComposeTheme] object within your wrapped content to get the values mapped to respective [DesignToken]s.
+ *
+ * Here is an example that defines and uses custom colors:
+ * ```kotlin
+ * // define your color tokens
+ * val content = DesignToken<Color>("content")
+ * val background = DesignToken<Color>("background")
+ *
+ * // use the tokens in your theme
+ * val AppTheme = buildComposeTheme {
+ *     colors = mapOf(
+ *         content to Color(0xFF212121),
+ *         background to Color(0xFFFAFAFA),
+ *     )
+ * }
+ *
+ * // use the ComposeTheme object to use the tokens in runtime
+ * @Composable
+ * fun App() {
+ *     AppTheme {
+ *         Box(Modifier.background(ComposeTheme.colors[background]).fillMaxSize()) {
+ *             BasicText("The is a styled example", style = TextStyle(color = ComposeTheme.colors[content]))
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ */
 fun buildComposeTheme(themeBuilder: ThemeBuilder.() -> Unit): ThemeComposable {
     val builder = ThemeBuilder().apply(themeBuilder)
 
-
-    val allProperties: Map<DesignProperty<*>, DesignTokens<*>> = mapOf(
-        _colors to DesignTokens("colors", builder.colors + DefaultComposeTheme.colors), _textStyles to DesignTokens("textStyles", builder.textStyles + DefaultComposeTheme.textStyles), _shapes to DesignTokens("shapes", builder.shapes + DefaultComposeTheme.shapes)
+    val allProperties = mapOf(
+        _colors to DesignTokens(_colors.name, builder.colors.entries + DefaultComposeTheme.colors.entries), _textStyles to DesignTokens(_textStyles.name, builder.textStyles.entries + DefaultComposeTheme.textStyles.entries), _shapes to DesignTokens(_shapes.name, builder.shapes.entries + DefaultComposeTheme.shapes.entries)
     ) + builder.properties.entries
 
     val theme = ResolvedTheme(builder.name, builder.indication, allProperties, builder.themeWrapper)
@@ -72,21 +102,22 @@ internal object DefaultIndication : Indication {
 }
 
 internal class ResolvedTheme(
-    internal val name: String = "ComposeTheme", internal val indication: Indication, private val properties: Map<DesignProperty<*>, DesignTokens<*>> = emptyMap(), internal val Extend: ThemeComposable
+    internal val name: String = "ComposeTheme", internal val indication: Indication, private val properties: Map<DesignProperty<*>, Any> = emptyMap(), internal val Extend: ThemeComposable
 ) {
     @Suppress("UNCHECKED_CAST")
-    fun <T> getProperty(property: DesignProperty<T>): DesignTokens<T>? {
-        return properties[property] as? DesignTokens<T>
+    fun <T> getProperty(property: DesignProperty<T>): T? {
+        return properties[property] as? T
     }
 }
 
 internal val LocalTheme = staticCompositionLocalOf<ResolvedTheme> { error("No theme was set. In order to use the ComposeTheme object you need to wrap your content with a theme @Composable returned by the buildComposeTheme {} function.") }
 
-data class DesignTokens<T>(private val propertyName: String, private val tokens: Map<DesignToken<T>, T>) {
+@Immutable
+data class DesignTokens<T> internal constructor(internal val propertyName: String, internal val entries: Map<DesignToken<T>, T>) {
     @Composable
     @ReadOnlyComposable
     operator fun get(token: DesignToken<T>): T {
-        val value = tokens[token]
+        val value = entries[token]
         if (value == null) {
             val theme = LocalTheme.current.name
             error("Tried to access the value of the token called ${token.name}, but no tokens with that name are defined within the $propertyName property. You probably forgot to set a ${token.name} token in your theme definition. The resolved theme was $theme")
@@ -95,13 +126,21 @@ data class DesignTokens<T>(private val propertyName: String, private val tokens:
     }
 }
 
+fun <T> DesignTokens(pair: Pair<DesignToken<T>, T>): DesignTokens<T> {
+    return DesignTokens(entries = mapOf(pair), propertyName = "")
+}
+
+fun <T> DesignTokens(vararg pairs: Pair<DesignToken<T>, T>): DesignTokens<T> {
+    return DesignTokens(entries = pairs.toMap(), propertyName = "")
+}
+
 
 @Composable
 @ReadOnlyComposable
-operator fun <T> ComposeTheme.get(property: DesignProperty<T>): DesignTokens<T> {
+operator fun <T> ComposeTheme.get(property: DesignProperty<T>): T {
     val theme = LocalTheme.current
     return theme.getProperty(property) ?: error(
-        "There is no ${property.name} design property in the ${theme.name} theme. To fix this:" + "\n1. Create a design property: val ${property.name} = DesignProperty<Type>(\"${property.name}\")\n2. Pass it to your theme definition: buildComposeTheme { properties -> properties[${property.name}] = TODO(\"Map tokens to values\") }"
+        "There is no ${property.name} design property in the ${theme.name} theme. To fix this:" + "\n1. Create a design property: val ${property.name} = DesignProperty<Type>(\"${property.name}\")\n2. Pass it to your theme definition: buildComposeTheme { properties -> properties[${property.name}] = TODO(\"Populate token values\") }"
     )
 }
 
@@ -117,9 +156,9 @@ class ThemeBuilder internal constructor() {
 
     var indication: Indication = DefaultIndication
 
-    var colors: Map<DesignToken<Color>, Color> = DefaultComposeTheme.colors
-    var textStyles: Map<DesignToken<TextStyle>, TextStyle> = DefaultComposeTheme.textStyles
-    var shapes: Map<DesignToken<Shape>, Shape> = DefaultComposeTheme.shapes
+    var colors: DesignTokens<Color> = DefaultComposeTheme.colors
+    var textStyles: DesignTokens<TextStyle> = DefaultComposeTheme.textStyles
+    var shapes: DesignTokens<Shape> = DefaultComposeTheme.shapes
 
     val properties = MutableThemeProperties()
 
@@ -135,8 +174,13 @@ class ThemeBuilder internal constructor() {
 }
 
 class MutableThemeProperties internal constructor() {
-    internal val entries = mutableMapOf<DesignProperty<*>, DesignTokens<*>>()
-    operator fun <T> set(property: DesignProperty<T>, value: Map<DesignToken<T>, T>) {
-        entries[property] = DesignTokens(property.name, value)
+    internal val entries = mutableMapOf<DesignProperty<*>, Any>()
+
+    operator fun <T> set(property: DesignProperty<DesignTokens<T>>, value: DesignTokens<T>) {
+        entries[property] = DesignTokens(propertyName = property.name, entries = value.entries) as Any
+    }
+
+    operator fun <T> set(property: DesignProperty<T>, value: T) {
+        entries[property] = value as Any
     }
 }

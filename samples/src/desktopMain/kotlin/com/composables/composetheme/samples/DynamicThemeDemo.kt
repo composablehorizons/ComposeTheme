@@ -17,23 +17,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.composables.composetheme.ComposeTheme
-import com.composables.composetheme.DesignToken
-import com.composables.composetheme.buildComposeTheme
-import com.composables.composetheme.colors
+import com.composables.composetheme.*
 
 val brand = DesignToken<Color>("brand")
 
 val RedTheme = buildComposeTheme {
     name = "Red"
-    colors = mapOf(
+    colors = DesignTokens(
         brand to Color.Red
     )
 }
 
 val BlueTheme = buildComposeTheme {
     name = "Blue"
-    colors = mapOf(
+    colors = DesignTokens(
         brand to Color.Blue
     )
 }

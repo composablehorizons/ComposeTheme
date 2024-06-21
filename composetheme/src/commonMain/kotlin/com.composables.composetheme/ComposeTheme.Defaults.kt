@@ -9,9 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-internal val _colors = DesignProperty<Color>("colors")
-
-internal val _textStyles = DesignProperty<TextStyle>("textStyles")
+internal val _textStyles = DesignProperty<DesignTokens<TextStyle>>("textStyles")
 internal val _xs = DesignToken<TextStyle>("xs")
 internal val _sm = DesignToken<TextStyle>("sm")
 internal val _base = DesignToken<TextStyle>("base")
@@ -22,7 +20,7 @@ internal val _xl3 = DesignToken<TextStyle>("xl3")
 internal val _xl4 = DesignToken<TextStyle>("xl4")
 internal val _xl5 = DesignToken<TextStyle>("xl5")
 
-internal val _shapes = DesignProperty<Shape>("shapes")
+internal val _shapes = DesignProperty<DesignTokens<Shape>>("shapes")
 internal val _round = DesignToken<Shape>("round")
 internal val _roundL = DesignToken<Shape>("roundL")
 internal val _roundXL = DesignToken<Shape>("roundXL")
@@ -30,6 +28,7 @@ internal val _roundXL2 = DesignToken<Shape>("roundXL2")
 internal val _roundXL3 = DesignToken<Shape>("roundXL3")
 internal val _full = DesignToken<Shape>("full")
 
+internal val _colors = DesignProperty<DesignTokens<Color>>("colors")
 internal val _red50 = DesignToken<Color>("red50")
 internal val _red100 = DesignToken<Color>("red100")
 internal val _red200 = DesignToken<Color>("red200")
@@ -132,7 +131,7 @@ internal val _gray800 = DesignToken<Color>("gray800")
 internal val _gray900 = DesignToken<Color>("gray900")
 
 internal object DefaultComposeTheme {
-    val colors = mapOf(
+    val colors = DesignTokens(
         _red50 to Color(0xFFFFEDED),
         _red100 to Color(0xFFFFC8C8),
         _red200 to Color(0xFFFFADAD),
@@ -234,7 +233,7 @@ internal object DefaultComposeTheme {
         _gray800 to Color(0xFF5D5D5D),
         _gray900 to Color(0xFF474747),
     )
-    val textStyles = mapOf(
+    val textStyles = DesignTokens(
         _xs to TextStyle(fontSize = 12.sp, lineHeight = 16.sp),
         _sm to TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
         _base to TextStyle(fontSize = 16.sp, lineHeight = 24.sp),
@@ -245,7 +244,7 @@ internal object DefaultComposeTheme {
         _xl4 to TextStyle(fontSize = 36.sp, lineHeight = 40.sp),
         _xl5 to TextStyle(fontSize = 48.sp, lineHeight = 48.sp),
     )
-    val shapes = mapOf(
+    val shapes = DesignTokens(
         _round to RoundedCornerShape(4.dp),
         _roundL to RoundedCornerShape(8.dp),
         _roundXL to RoundedCornerShape(12.dp),
