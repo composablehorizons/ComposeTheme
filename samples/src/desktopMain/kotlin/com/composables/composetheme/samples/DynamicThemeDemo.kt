@@ -19,16 +19,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.composables.composetheme.*
 
-val brand = DesignToken<Color>("brand")
+private val brand = DesignToken<Color>("brand")
 
-val RedTheme = buildComposeTheme {
+private val RedTheme = buildComposeTheme {
     name = "Red"
     colors = DesignTokens(
         brand to Color.Red
     )
 }
 
-val BlueTheme = buildComposeTheme {
+private val BlueTheme = buildComposeTheme {
     name = "Blue"
     colors = DesignTokens(
         brand to Color.Blue
@@ -49,7 +49,7 @@ fun DynamicThemeDemo() {
 }
 
 @Composable
-fun Toggle(toggled: Boolean, onToggled: (Boolean) -> Unit) {
+private fun Toggle(toggled: Boolean, onToggled: (Boolean) -> Unit) {
     val offset by animateDpAsState(if (toggled) 18.dp else 0.dp)
     val backgroundColor by animateColorAsState(if (toggled) ComposeTheme.colors[brand] else Color(0xFFBDBDBD))
 
