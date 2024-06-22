@@ -5,15 +5,17 @@
 
 ## Installation
 
-```kotlin
+```kts
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation("com.composables:composetheme:1.1.0-alpha")
+   
     // includes extensions for material 3 compose
     implementation ("com.composables:composetheme-material3:1.1.0-alpha")
+   
     // includes extensions for material compose
     implementation ("com.composables:composetheme-material:1.1.0-alpha")
 }
@@ -182,6 +184,18 @@ val ComposeThemeExtended = buildComposeTheme {
             content()
         }
     }
+}
+
+@Composable
+fun App() {
+   ComposeThemeExtended {
+       // both ExistingTheme & ComposeTheme are available here
+      Box(Modifier.fillMaxSize().background(ComposeTheme.colors.gray50)) {
+         Box(Modifier.clickable { }.background(ExtendedTheme.colors.tertiary, ComposeTheme.shapes.round)) {
+            Text("Hello")
+         }
+      }
+   }
 }
 ```
 

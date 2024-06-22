@@ -1,6 +1,7 @@
 package com.composables.composetheme.samples
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +22,7 @@ private val brand = DesignToken<Color>("brand")
 /**
  * Showcases how to use ComposeTheme in combination with other existing themes.
  *
- * The [ExtendedTheme] is a copy-pasted from the official Jetpack Compose 'Extending Material Theme' demo.
+ * The [ExtendedTheme] is a copy-pasted from the official Jetpack Compose [Extending Material Theme](https://developer.android.com/develop/ui/compose/designsystems/custom#extending-material) demo.
  *
  * This way you get the flexibility of ComposeTheme without rewriting or throwing away your existing design system
  */
@@ -83,6 +84,7 @@ fun ExtendedButton(onClick: () -> Unit, modifier: Modifier = Modifier, content: 
         colors = ButtonDefaults.buttonColors(
             containerColor = ExtendedTheme.colors.tertiary,
             contentColor = ExtendedTheme.colors.onTertiary
-        ), onClick = onClick, modifier = modifier, content = content
+        ),
+        onClick = onClick, modifier = modifier, content = content
     )
 }
