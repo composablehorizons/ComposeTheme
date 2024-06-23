@@ -201,7 +201,7 @@ fun App() {
 
 ### Extend using Material 3 Compose & Material Compose 
 
-Working with Material Compose can be painful as it does not let you add new colors easily. At the same time your components wrap the Material Compose components, which are styled using `MaterialTheme`, which leaves you to a dead end.
+Working with Material Compose can be painful as it does not support adding new tokens or properties. [The official recommendation](https://developer.android.com/develop/ui/compose/designsystems/custom#extending-material) for adding new properties to your design system is rather verbose as it needs alot of boilerplate to setup and maintain. At the same time, any of our custom components that wrap the Material components require you to continue using `MaterialTheme` which can make the migration to a fully custom design system even harder.
 
 Compose Theme makes it simple to build new themes using existing Material Compose theme setups using the `composetheme-material3` and `composetheme-material` modules.
 
