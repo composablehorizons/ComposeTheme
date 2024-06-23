@@ -147,7 +147,7 @@ data class Transitions(
 
 ```kotlin
 val Theme = buildComposeTheme { 
-    properties[transition] = Transitions(
+    properties[transitions] = Transitions(
         fast = 200, 
         faster = 300
     )
