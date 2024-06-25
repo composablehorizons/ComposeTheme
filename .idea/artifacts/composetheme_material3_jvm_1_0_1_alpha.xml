@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="composetheme-material3-jvm-1.0.1-alpha">
+    <output-path>$PROJECT_DIR$/composetheme-material3/build/libs</output-path>
+    <root id="archive" name="composetheme-material3-jvm-1.0.1-alpha.jar">
+      <element id="module-output" name="composetheme-root.composetheme-material3.jvmMain" />
+    </root>
+  </artifact>
+</component>

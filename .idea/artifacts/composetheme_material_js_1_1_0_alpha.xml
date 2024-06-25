@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="composetheme-material-js-1.1.0-alpha">
+    <output-path>$PROJECT_DIR$/composetheme-material/build/libs</output-path>
+    <root id="archive" name="composetheme-material-js-1.1.0-alpha.jar">
+      <element id="module-output" name="composetheme-root.composetheme-material.jsMain" />
+    </root>
+  </artifact>
+</component>

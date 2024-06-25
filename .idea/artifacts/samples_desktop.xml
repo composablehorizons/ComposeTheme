@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="samples-desktop">
+    <output-path>$PROJECT_DIR$/samples/build/libs</output-path>
+    <root id="archive" name="samples-desktop.jar">
+      <element id="module-output" name="composetheme-root.samples.desktopMain" />
+    </root>
+  </artifact>
+</component>
