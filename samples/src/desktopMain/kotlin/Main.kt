@@ -5,7 +5,8 @@ fun main() = singleWindowApplication {
 //    CustomPropertiesDemo()
 //    DefaultsDemo()
 //    DynamicThemeDemo()
-    ExtendDemo()
+//    ExtendDemo()
 //    ExtendMaterial3Demo()
 //    ExtendMaterialDemo()
+//    PointerIconDemo()
 }

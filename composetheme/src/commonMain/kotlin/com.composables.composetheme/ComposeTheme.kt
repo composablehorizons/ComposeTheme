@@ -67,7 +67,7 @@ fun buildComposeTheme(themeBuilder: ThemeBuilder.() -> Unit): ThemeComposable {
     val theme = ResolvedTheme(builder.name, builder.indication, allProperties, builder.themeWrapper)
 
     return { content ->
-        CompositionLocalProvider(LocalTheme provides theme, LocalIndication provides builder.indication, content = {
+        CompositionLocalProvider(LocalTheme provides theme, LocalIndication provides builder.indication, LocalPlatformPointer provides PlatformPointerIcon, content = {
             theme.Extend(content)
         })
     }
