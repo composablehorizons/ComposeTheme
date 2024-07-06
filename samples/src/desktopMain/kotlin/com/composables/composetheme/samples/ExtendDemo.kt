@@ -68,8 +68,9 @@ object ExtendedTheme {
 
 @Composable
 fun ExtendDemo() {
-    // using ExtendedComposeTheme instead of MaterialExtendedTheme enables you to use both ComposeTheme & MaterialExtendedTheme objects
+    // using ExtendedComposeTheme instead of ExtendedTheme enables you to use both ComposeTheme & ExtendedTheme objects
     ComposeThemeExtended {
+        // you can now use both ComposeTheme (such as ComposeTheme.colors[brand] and ExtendedTheme properties (ExtendedTheme.colors.tertiary)
         Box(Modifier.fillMaxSize().background(ComposeTheme.colors[brand])) {
             ExtendedButton(onClick = {}) {
                 Text("Hello")

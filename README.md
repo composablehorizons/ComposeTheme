@@ -169,13 +169,9 @@ fun App() {
 
 ## Extend ComposeTheme with existing design systems
 
-Let's assume you have an `ExistingTheme` composable function that uses one or more `CompositionLocalProvider` that push down the Compose tree styling properties. You probably also have a respective `ExistingTheme` object with extension functions that get the respective `CompositionLocal.current` value. You also use this `ExistingTheme` object across your codebase to style your components.
+Let's assume you have an `ExistingTheme` composable function that uses one or more `CompositionLocalProvider`s that pushes custom colors (such as `tertiary`) down the Compose tree. You probably also have a respective `ExistingTheme` object with extension functions that get the respective `CompositionLocal.current` value. You also use this `ExistingTheme` object across your codebase to gain access to those colors by doing `ExistingTheme.colors.tetriary`.
 
-You can extend your Compose Theme to use other design systems using the `extend` function. 
-
-This will cause the children of the created theme composable to have access to any `CompositionLocal`, provided by your provided.
-
-You can now use Compose Theme to easily build flexible themes, while the rest of your code base stays unmodified:
+You can extend your Compose Theme to use any existing design system using the `extend` function:
 
 ```kotlin
 val ComposeThemeExtended = buildComposeTheme {
@@ -185,13 +181,19 @@ val ComposeThemeExtended = buildComposeTheme {
         }
     }
 }
+```
 
+This will cause the children of created theme composable function (in this example `ComposeThemeExtended`) to have access to any `CompositionLocal` provided by the `ExistingTheme` function.
+
+You can now use Compose Theme to easily build flexible themes, while the rest of your code base stays unmodified:
+
+```kotlin
 @Composable
 fun App() {
    ComposeThemeExtended {
        // both ExistingTheme & ComposeTheme are available here
       Box(Modifier.fillMaxSize().background(ComposeTheme.colors.gray50)) {
-         Box(Modifier.clickable { }.background(ExtendedTheme.colors.tertiary, ComposeTheme.shapes.round)) {
+         Box(Modifier.clickable { }.background(ExistingTheme.colors.tertiary, ComposeTheme.shapes.round)) {
             Text("Hello")
          }
       }
