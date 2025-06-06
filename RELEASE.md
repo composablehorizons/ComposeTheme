@@ -23,3 +23,15 @@ The commands that follows need to be run together. Otherwise you will get an err
 ```
 
 As soon as the version is available it will be listed at: https://repo1.maven.org/maven2/com/composables/
+
+## Release to Maven Local
+
+The following command uploads all kotlin multiplatform artifacts to Maven Local so that you can use the dependency
+locally in other projects stored in your computer:
+
+```shell
+./gradlew publishToMavenLocal
+```
+
+When the task completes successfully, you can add the published artifact in your project. Make sure the other projects
+use `mavenLocal()` in their `settings.gradle.kts` dependencies block.
