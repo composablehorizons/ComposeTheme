@@ -1,16 +1,10 @@
 package com.composables.composetheme
 
 import androidx.compose.foundation.Indication
-import androidx.compose.foundation.IndicationInstance
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.text.TextStyle
 
 
@@ -67,39 +61,12 @@ fun buildComposeTheme(themeBuilder: ThemeBuilder.() -> Unit): ThemeComposable {
     val theme = ResolvedTheme(builder.name, builder.indication, allProperties, builder.themeWrapper)
 
     return { content ->
-        CompositionLocalProvider(LocalTheme provides theme, LocalIndication provides builder.indication, content = {
+        CompositionLocalProvider(LocalTheme provides theme, LocalIndication provides builder.indication) {
             theme.Extend(content)
-        })
-    }
-}
-
-internal object DefaultIndication : Indication {
-
-    private class DefaultDebugIndicationInstance(
-        private val isPressed: State<Boolean>,
-        private val isHovered: State<Boolean>,
-        private val isFocused: State<Boolean>,
-    ) : IndicationInstance {
-        override fun ContentDrawScope.drawIndication() {
-            drawContent()
-            if (isPressed.value) {
-                drawRect(color = Color.Black.copy(alpha = 0.1f), size = size)
-            } else if (isHovered.value || isFocused.value) {
-                drawRect(color = Color.Black.copy(alpha = 0.05f), size = size)
-            }
-        }
-    }
-
-    @Composable
-    override fun rememberUpdatedInstance(interactionSource: InteractionSource): IndicationInstance {
-        val isPressed = interactionSource.collectIsPressedAsState()
-        val isHovered = interactionSource.collectIsHoveredAsState()
-        val isFocused = interactionSource.collectIsFocusedAsState()
-        return remember(interactionSource) {
-            DefaultDebugIndicationInstance(isPressed, isHovered, isFocused)
         }
     }
 }
+
 
 internal class ResolvedTheme(
     internal val name: String = "ComposeTheme", internal val indication: Indication, private val properties: Map<DesignProperty<*>, Any> = emptyMap(), internal val Extend: ThemeComposable
@@ -154,7 +121,7 @@ class ThemeBuilder internal constructor() {
      */
     var name: String = "ComposeTheme"
 
-    var indication: Indication = DefaultIndication
+    var indication: Indication = DefaultDebugIndication
 
     var colors: DesignTokens<Color> = DefaultComposeTheme.colors
     var textStyles: DesignTokens<TextStyle> = DefaultComposeTheme.textStyles
