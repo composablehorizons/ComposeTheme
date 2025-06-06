@@ -2,7 +2,11 @@ package com.composables.composetheme
 
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
@@ -51,16 +55,23 @@ typealias ThemeComposable = @Composable (@Composable () -> Unit) -> Unit
  * ```
  *
  */
-fun buildComposeTheme(themeBuilder: ThemeBuilder.() -> Unit): ThemeComposable {
-    val builder = ThemeBuilder().apply(themeBuilder)
-
-    val allProperties = mapOf(
-        _colors to DesignTokens(_colors.name, builder.colors.entries + DefaultComposeTheme.colors.entries), _textStyles to DesignTokens(_textStyles.name, builder.textStyles.entries + DefaultComposeTheme.textStyles.entries), _shapes to DesignTokens(_shapes.name, builder.shapes.entries + DefaultComposeTheme.shapes.entries)
-    ) + builder.properties.entries
-
-    val theme = ResolvedTheme(builder.name, builder.indication, allProperties, builder.themeWrapper)
-
+fun buildComposeTheme(themeBuilder: @Composable ThemeBuilder.() -> Unit): ThemeComposable {
     return { content ->
+        val builder = ThemeBuilder().apply {
+            themeBuilder()
+        }
+
+        val allProperties = mapOf(
+            _colors to DesignTokens(_colors.name, builder.colors.entries + DefaultComposeTheme.colors.entries),
+            _textStyles to DesignTokens(
+                _textStyles.name,
+                builder.textStyles.entries + DefaultComposeTheme.textStyles.entries
+            ),
+            _shapes to DesignTokens(_shapes.name, builder.shapes.entries + DefaultComposeTheme.shapes.entries)
+        ) + builder.properties.entries
+
+        val theme = ResolvedTheme(builder.name, builder.indication, allProperties, builder.themeWrapper)
+
         CompositionLocalProvider(LocalTheme provides theme, LocalIndication provides builder.indication) {
             theme.Extend(content)
         }
@@ -69,7 +80,10 @@ fun buildComposeTheme(themeBuilder: ThemeBuilder.() -> Unit): ThemeComposable {
 
 
 internal class ResolvedTheme(
-    internal val name: String = "ComposeTheme", internal val indication: Indication, private val properties: Map<DesignProperty<*>, Any> = emptyMap(), internal val Extend: ThemeComposable
+    internal val name: String = "ComposeTheme",
+    internal val indication: Indication,
+    private val properties: Map<DesignProperty<*>, Any> = emptyMap(),
+    internal val Extend: ThemeComposable,
 ) {
     @Suppress("UNCHECKED_CAST")
     fun <T> getProperty(property: DesignProperty<T>): T? {
@@ -77,10 +91,14 @@ internal class ResolvedTheme(
     }
 }
 
-internal val LocalTheme = staticCompositionLocalOf<ResolvedTheme> { error("No theme was set. In order to use the ComposeTheme object you need to wrap your content with a theme @Composable returned by the buildComposeTheme {} function.") }
+internal val LocalTheme =
+    staticCompositionLocalOf<ResolvedTheme> { error("No theme was set. In order to use the ComposeTheme object you need to wrap your content with a theme @Composable returned by the buildComposeTheme {} function.") }
 
 @Immutable
-data class DesignTokens<T> internal constructor(internal val propertyName: String, internal val entries: Map<DesignToken<T>, T>) {
+data class DesignTokens<T> internal constructor(
+    internal val propertyName: String,
+    internal val entries: Map<DesignToken<T>, T>,
+) {
     @Composable
     @ReadOnlyComposable
     operator fun get(token: DesignToken<T>): T {
