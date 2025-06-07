@@ -17,7 +17,7 @@ plugins {
 
 val publishGroupId = "com.composables"
 val publishArtifactId = "composetheme"
-val publishVersion = "1.3.0"
+val publishVersion = "1.4.0"
 val githubUrl = "github.com/composablehorizons/composetheme"
 
 java {
