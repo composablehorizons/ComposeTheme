@@ -119,6 +119,13 @@ fun <T> DesignTokens(vararg pairs: Pair<DesignToken<T>, T>): DesignTokens<T> {
     return DesignTokens(entries = pairs.toMap(), propertyName = "")
 }
 
+fun <T> DesignTokens(pairs: List<Pair<DesignToken<T>, T>>): DesignTokens<T> {
+    return DesignTokens(entries = pairs.toMap(), propertyName = "")
+}
+
+fun <T> DesignTokens(pairs: Map<DesignToken<T>, T>): DesignTokens<T> {
+    return DesignTokens(entries = pairs, propertyName = "")
+}
 
 @Composable
 @ReadOnlyComposable
