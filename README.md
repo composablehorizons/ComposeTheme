@@ -1,3 +1,8 @@
+# ComposeTheme is now baked-in to [Compose Unstyled](https://composeunstyled.com/)
+
+This library is now deprecated. Use Compose Unstyled instead. It has richer support for themes and also comes with unstyled components that you can use to build your design system with.
+---
+
 <div align="center">
 <h1><img src="./art/logo.svg"> Compose Theme</h1>
 <span>The API to your Compose Design System</span>
